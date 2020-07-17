@@ -3,7 +3,7 @@
 [![](https://jitpack.io/v/xiaojigugu/AudioRecorder.svg)](https://jitpack.io/#xiaojigugu/AudioRecorder)
 
 
-1. This is a audio recording lib for Android which is based on [lame]("https://lame.sourceforge.io/").
+1. This is an audio recording lib for Android which is based on [lame]("https://lame.sourceforge.io/").
 2. AudioRecord is used to gain pcm data.
 3. lame lib is used to encode pcm file into mp3 file.
 
