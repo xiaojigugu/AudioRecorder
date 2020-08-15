@@ -14,19 +14,16 @@
 
 class Mp3Encoder {
 private:
-    pthread_t pid_encode;
-    JavaCallHelper *javaCallHelper = 0;
+    JNIEnv *env;
 public:
     char *in_path;
     char *out_path;
+    pthread_t pid_encode,pid_join;
+    JavaCallHelper *javaCallHelper = 0;
 
     Mp3Encoder(JavaVM *javaVm, JNIEnv *env, jobject pJobject);
 
-    JavaCallHelper* getJavaCallHelper(){
-        return javaCallHelper;
-    };
-
-    virtual ~Mp3Encoder();
+    ~Mp3Encoder();
 
     void encode(char *inPath, char *outPath);
 };

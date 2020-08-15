@@ -28,7 +28,6 @@ public class AudioRecorder {
 
     public AudioRecorder(OnRecordListener listener) {
         this.listener = listener;
-        Log.i("Mp3Converter", "Mp3Converter: " + getLameVersion());
     }
 
 
@@ -184,12 +183,11 @@ public class AudioRecorder {
 
     /**
      * 供native调用
-     *
-     * @param filePath 转码完成后的MP3文件路径
+
      */
-    public void onComplete(String filePath) {
+    public void onComplete(String mp3Path) {
         if (listener != null) {
-            listener.onComplete(filePath);
+            listener.onComplete(mp3Path);
         }
     }
 
@@ -200,11 +198,4 @@ public class AudioRecorder {
      * @param outPutFilePath 输出mp3文件绝对路径
      */
     private native void convertNative(String inputFilePath, String outPutFilePath);
-
-    /**
-     * 获取lame库的版本号
-     *
-     * @return 版本号
-     */
-    private native String getLameVersion();
 }

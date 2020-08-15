@@ -4,7 +4,7 @@
 
 #include "JavaCallHelper.h"
 
-JavaCallHelper::JavaCallHelper(JavaVM *javaVm, JNIEnv *env, jobject instance){
+JavaCallHelper::JavaCallHelper(JavaVM *javaVm, JNIEnv *env, jobject instance) {
 
     this->javaVM = javaVm;
     this->env = env;
@@ -17,19 +17,23 @@ JavaCallHelper::JavaCallHelper(JavaVM *javaVm, JNIEnv *env, jobject instance){
 }
 
 JavaCallHelper::~JavaCallHelper() {
-    javaVM = 0;
+    javaVM = nullptr;
     env->DeleteGlobalRef(instance);
-    instance = 0;
+    instance = nullptr;
 }
 
 void JavaCallHelper::onComplete(char *path) {
-    jstring str=env->NewStringUTF(path);
-    env->CallVoidMethod(instance, jvm_onComplete,str);
+    JNIEnv *env_child;
+    javaVM->AttachCurrentThread(&env_child, nullptr);
+    jstring str = env_child->NewStringUTF(path);
+    env_child->CallVoidMethod(instance, jvm_onComplete, str);
+    env_child->ReleaseStringUTFChars(str,path);
+    javaVM->DetachCurrentThread();
 }
 
 void JavaCallHelper::onConverting(int progress) {
     JNIEnv *env_child;
-    javaVM->AttachCurrentThread(&env_child, NULL);
+    javaVM->AttachCurrentThread(&env_child, nullptr);
     env_child->CallVoidMethod(instance, jvm_onConverting, progress);
     javaVM->DetachCurrentThread();
 }

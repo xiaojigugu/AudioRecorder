@@ -1,6 +1,7 @@
 package com.junt.recorder.view;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -11,25 +12,27 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 
-import com.junt.recorder.AudioRecorderManager;
 import com.junt.recorder.core.AudioRecorder;
 import com.junt.recorder.core.OnRecordListener;
 import com.junt.recorder.R;
 import com.junt.recorder.utils.FftFactory;
 
-import java.io.File;
 public class RecordActivity extends AppCompatActivity {
 
     private final String TAG = "Audio_RecordActivity";
 
     private AudioRecorder audioRecorder;
     private AudioView audioView;
+    private LineProgressBar progressBar;
     private FftFactory fftFactory;
     private long downTime;
     private boolean isRecordInvalid;
 
     private String outDir;
     private int max_time_ms;
+    private Button btnRecord;
+    private float duration;
+    private Runnable progressRunnable;
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -39,8 +42,8 @@ public class RecordActivity extends AppCompatActivity {
 
         init();
 
-        final Button btnRecord = findViewById(R.id.btnRecord);
-
+        btnRecord = findViewById(R.id.btnRecord);
+        progressBar = findViewById(R.id.progressBar);
         btnRecord.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -56,6 +59,7 @@ public class RecordActivity extends AppCompatActivity {
             isRecordInvalid = true;
             downTime = System.currentTimeMillis();
             btnRecord.setPressed(true);
+            startProgressBar();
             audioRecorder.startRecording(outDir, max_time_ms);
         } else if (event.getAction() == MotionEvent.ACTION_CANCEL
                 || event.getAction() == MotionEvent.ACTION_UP) {
@@ -64,6 +68,7 @@ public class RecordActivity extends AppCompatActivity {
                 isRecordInvalid = false;
             }
             btnRecord.setPressed(false);
+            stopProgressBar();
             audioRecorder.stop();
         }
     }
@@ -99,7 +104,7 @@ public class RecordActivity extends AppCompatActivity {
 
             @Override
             public void onConverting(int progress) {
-                Log.i(TAG, "onConverting: " + Thread.currentThread().getName() + "->" + progress);
+
             }
 
             @Override
@@ -118,5 +123,30 @@ public class RecordActivity extends AppCompatActivity {
             }
         };
         audioRecorder = new AudioRecorder(listener);
+    }
+
+    /**
+     * 设置进度条显示并调整其大小
+     */
+    private void startProgressBar() {
+        progressBar.setProgress(0);
+        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) progressBar.getLayoutParams();
+        params.width = btnRecord.getWidth() + 10;
+        params.height = params.width;
+        progressBar.setLayoutParams(params);
+        duration = 0;
+        progressRunnable = new Runnable() {
+            @Override
+            public void run() {
+                duration += 50;
+                progressBar.setProgress((duration / max_time_ms) * 100);
+                progressBar.postDelayed(this, 50);
+            }
+        };
+        progressBar.postDelayed(progressRunnable, 50);
+    }
+
+    private void stopProgressBar() {
+        progressBar.removeCallbacks(progressRunnable);
     }
 }

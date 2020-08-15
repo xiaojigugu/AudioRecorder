@@ -178,6 +178,9 @@ public class AudioView extends View {
         float ratio = SCALE * (reversal ? 1 : -1);
         if (i < pointList.size() - 2) {
             Point point = pointList.get(i);
+            if (point==null){
+                return;
+            }
             Point nextPoint = pointList.get(i + 1);
             int midX = (point.x + nextPoint.x) >> 1;
             if (reversal) {

@@ -4,7 +4,7 @@
 
 
 1. This is an audio recording lib for Android which is based on [lame]("https://lame.sourceforge.io/").
-2. AudioRecorder is used to gain pcm data.
+2. AudioRecord is used to gain pcm data.
 3. lame lib is used to encode pcm file into mp3 file.
 
 
@@ -33,7 +33,7 @@ dependencies {
 ```groovy
 // step 4. Add abiFilters in build.gradle(app)
         ndk{
-            abiFilters "armeabi-v7a",//"arm64-v8a","x86","x86_64"
+            abiFilters "armeabi-v7a"//,"arm64-v8a","x86","x86_64"
         }
 ```
 
